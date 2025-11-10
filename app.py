@@ -33,15 +33,14 @@ st.write(
 )
 st.info("Catatan: Harga di bawah ini adalah **estimasi kasar (kira-kira)** per porsi untuk wilayah Banjarbaru dan dapat bervariasi.")
 
-
-# --- DATA HARGA (Menggantikan Data Gizi) ---
-# Estimasi harga per porsi untuk komponen dalam satu nampan
 data_harga = {
     'nama_makanan': [
         'nasi_putih', 'ayam', 'nasi_kuning', 'nasi_liwet', 'buah_jeruk',
         'buah_melon', 'buah_pisang', 'buah_duku', 'sayur_capcay',
         'sayur_wortel_kacang', 'sayur', 'wortel', 'susu', 'tahu', 'tempe',
-        'tempe_bacem', 'ayam_kecap', 'buah_semangka'
+        'tempe_bacem', 'ayam_kecap', 'buah_semangka',
+        'buah_kelengkeng', 'mie_goreng', 'daging_slice', 'burger',
+        'lontong_labu', 'sayur_gori', 'buah_rambutan'
     ],
     'estimasi_harga_rp': [
         2500,  # nasi_putih (1 porsi)
@@ -61,7 +60,14 @@ data_harga = {
         1000,  # tempe (1 potong)
         1500,  # tempe_bacem (1 potong)
         4000,  # ayam_kecap (1 potong lauk)
-        1000   # buah_semangka (1 potong)
+        1000,  # buah_semangka (1 potong)
+        1500,  # buah_kelengkeng (~3 biji)
+        2000,  # mie_goreng (porsi pendamping)
+        4500,  # daging_slice (1 potong lauk)
+        5000,  # burger (1 mini burger sbg lauk)
+        3500,  # lontong_labu (porsi)
+        1500,  # sayur_gori (1 porsi sayur)
+        1000   # buah_rambutan (~2 biji)
     ]
 }
 df_harga = pd.DataFrame(data_harga)
@@ -85,8 +91,6 @@ except Exception as e:
     st.stop()
 
 # --- TAMPILAN UTAMA APLIKASI ---
-
-# Menghapus pilihan profil gizi, karena tidak relevan lagi
 
 st.subheader("Unggah Gambar Makananmu")
 uploaded_file = st.file_uploader("Unggah gambar di sini...", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
@@ -132,8 +136,7 @@ if uploaded_file is not None:
                 
                 # Ubah ke set untuk perhitungan (menghindari duplikat jika ada)
                 final_food_set = set(final_food_list)
-                
-                # --- Logika Kalkulasi Harga ---
+
                 estimasi = df_harga[df_harga['nama_makanan'].isin(final_food_set)]
                 
                 # Hanya ambil kolom harga dan jumlahkan
@@ -154,7 +157,6 @@ if uploaded_file is not None:
                 st.write("---")
                 st.subheader(f"📈 Perbandingan dengan Target Harga (Rp {TARGET_HARGA:,.0f})")
 
-                # --- Logika Kesimpulan Harga ---
                 selisih = total_harga - TARGET_HARGA
                 
                 if total_harga > TARGET_HARGA:
